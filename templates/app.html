@@ -1,0 +1,213 @@
+<!doctype html>
+<title>Revision Helper!</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+    body, h1, h2, h3, h4, h5, h6 {
+        font-family: "Raleway", sans-serif;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    h2 {
+        text-align: center;
+    }
+
+    h2.border-items-off {
+        background-color: darkred;
+        border: 1px solid;
+    }
+
+    h2.border-items-on {
+        background-color: chartreuse;
+        border: 1px solid;
+    }
+
+    h3 {
+        text-align: center;
+    }
+
+    body, html {
+        height: 100%;
+        line-height: 1.5;
+        background-color: indianred;
+    }
+
+    h2:hover {
+        opacity: 0.8;
+    }
+
+    div.buttonDIV:hover {
+        opacity: 0.8;
+    }
+
+    body {
+        margin-bottom: 50px;
+    }
+
+    div.buttonDIV {
+        background-color: #cd3c28;
+        display: table;
+        border-radius: 25px;
+        padding: 30px;
+        width: 80%;
+        height: 80px;
+    }
+
+    #footer {
+        background-color: #e20b6e;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        margin-bottom: 0;
+    }
+</style>
+<body>
+<div class="w3-row">
+    <div class="w3-container w3-twothird" style="position: fixed;top:auto;right:0px;left:auto;">
+        <h1>PDF Revision Web App</h1>
+        <div class="w3-half">
+            <div class="buttonDIV" onclick="nextFunction()"><h3>Show new slide.</h3></div>
+            <br>
+            <div class="buttonDIV" style="background-color: #cd5f19" onclick="learnFunction()"><h3>Slide learnt!</h3>
+            </div>
+            <br>
+            <div class="buttonDIV" onclick="exitFunction()"><h3>Exit the program.</h3></div>
+        </div>
+        <div class="w3-half">
+            Instructions for the web app (best used on laptops and desktops!)<br>
+            <ul>
+                <li>The list on the left shows all of the modules the app has recognised. If this list seems
+                    incomplete, check the folder used to initiate the app.
+                </li>
+                <li>The modules that are green are the modules that a random slide will be selected from.</li>
+                <li>Click 'Show new slide.' to generate a new slide - it will appear in the Adobe program
+                    instantly.
+                </li>
+                <li>Clicking the same button will show a new slide. If you have learnt the slide, click
+                    'Slide learnt!', and as a result, that slide will not show again.
+                </li>
+                <li>Additional instructions and details, as well as the code, can be found on the Github
+                    repo: ...
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="w3-container w3-third">
+        {% for row in names_pdf %}
+            <h2 class="border-items-off" id={{ row }} onclick="onOffSwitch({{ row }})">{{ row }}</h2>
+        {% endfor %}
+    </div>
+    <div id="footer">
+        <h3 id="status">--</h3>
+    </div>
+</div>
+
+<script src="http://ojc37.user.srcf.net/assets/js/jquery.min.js"></script>
+<script>
+    $(document).keypress(function (e) {
+        if (e.which === 97) {
+            //a has been pressed
+            nextFunction();
+        }
+        else if (e.which === 108) {
+            //l has been pressed
+            learnFunction();
+        }
+        else if (e.which === 116) {
+            //t has been pressed
+            exitFunction();
+        }
+        else {
+            console.log("Uh oh...");
+        }
+    });
+
+    window.onload = function () {
+        document.getElementById("status").innerHTML = 'Welcome to the web app!';
+        updateGrid();
+    };
+
+    function updateGrid() {
+        $.ajax({
+            url: "/colourGrid/"
+        }).success(function (val) {
+            var valid = val.on;
+            var invalid = val.off;
+            var i;
+            for (i = 0; i < valid.length; i++) {
+                document.getElementById(valid[i]).className = 'border-items-on'
+            }
+            for (i = 0; i < invalid.length; i++) {
+                document.getElementById(invalid[i]).className = 'border-items-off'
+            }
+        }).error(function (err) {
+            console.log(err)
+        });
+    }
+
+    function onOffSwitch(x) {
+        var id = x.id;
+        var currentClass = x.className;
+
+        $.ajax({
+            type: "POST",
+            url: "/update/",
+            data: JSON.stringify({"id": id, "class": currentClass}),
+            contentType: "application/json"
+        }).success(function () {
+            if (currentClass === 'border-items-off') {
+                document.getElementById("status").innerHTML = "Module " + id + " added to selection.";
+            }
+            else if (currentClass === 'border-items-on') {
+                document.getElementById("status").innerHTML = "Module " + id + " removed from selection.";
+            }
+        }).error(function (err) {
+            document.getElementById("status").innerHTML = "Error...";
+            console.log(err)
+        }).complete(function () {
+            updateGrid();
+        });
+    }
+
+    function nextFunction() {
+        $.ajax({
+            url: "/next/"
+        }).success(function (val) {
+            document.getElementById("status").innerHTML = val;
+        }).error(function (err) {
+            document.getElementById("status").innerHTML = "Error...";
+            console.log(err);
+        });
+    }
+
+    function learnFunction() {
+        $.ajax({
+            url: "/know/"
+        }).success(function (val) {
+            document.getElementById("status").innerHTML = val;
+        }).error(function (err) {
+            document.getElementById("status").innerHTML = "Error...";
+            console.log(err);
+        });
+    }
+
+    function exitFunction() {
+        $.ajax({
+            url: "/exit/"
+        }).success(function (val) {
+            document.getElementById("status").innerHTML = val;
+        }).error(function (err) {
+            document.getElementById("status").innerHTML = "Error...";
+            console.log(err);
+        });
+    }
+</script>
+</body>
