@@ -129,6 +129,6 @@ if __name__ == '__main__':
         glob_file_loc = str(sys.argv[1])
         adobe_loc = str(sys.argv[2])
         set_notes()
-        app.run()
+        app.run(port=1234)
     else:
         print('usage: folder_location_pdf_files file_location_AcroRd32.exe')
