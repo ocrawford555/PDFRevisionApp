@@ -4,7 +4,7 @@ install_requires = [
     'aiohttp>=2.3.5',
     'gunicorn~=19.7.1',
     'jira~=2.0.0',
-    'dnspython~=1.15.0',
+    'dnspython>=1.15,<1.17',
     "PyJWT==1.6.4",
     'aws-requests-auth~=0.4.1',
     "elasticsearch>=6.0.0,<7.0.0",
