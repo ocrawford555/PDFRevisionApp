@@ -8,7 +8,7 @@ install_requires = [
     "PyJWT==1.6.4",
     'aws-requests-auth~=0.4.1',
     "elasticsearch>=6.0.0,<7.0.0",
-    "elasticsearch-dsl>=6.0.0,<7.0.0",
+    "elasticsearch-dsl>=6.0.0,<8.0.0",
     "beautifulsoup4>=4.6.3",
     "halflife>=1.0.0",
     "numpy~=1.15.2",
