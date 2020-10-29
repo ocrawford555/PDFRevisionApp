@@ -11,7 +11,7 @@ install_requires = [
     "elasticsearch-dsl>=6.0.0,<7.0.0",
     "beautifulsoup4>=4.6.3",
     "halflife>=1.0.0",
-    "numpy~=1.15.2",
+    "numpy>=1.15.2,<1.20.0",
 ]
 
 setup(
