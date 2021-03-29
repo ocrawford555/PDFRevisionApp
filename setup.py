@@ -2,7 +2,7 @@ from distutils.core import setup
 
 install_requires = [
     'aiohttp>=2.3.5',
-    'gunicorn~=19.7.1',
+    'gunicorn>=19.7.1,<20.2.0',
     'jira~=2.0.0',
     'dnspython~=1.15.0',
     "PyJWT==1.6.4",
